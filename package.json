@@ -4,10 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "preinstall": "ELECTRON_MIRROR='https://npmmirror.com/mirrors/electron/'",
     "dev": "ts-node src/index.ts"
   },
   "dependencies": {
     "@types/fs-extra": "^9.0.13",
+    "electron": "^20.1.4",
     "exceljs": "^4.3.0",
     "fs-extra": "^10.1.0",
     "ts-node": "^10.9.1",
