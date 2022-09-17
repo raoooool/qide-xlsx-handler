@@ -34,7 +34,7 @@ function getWb(path: string) {
   return wb.xlsx.load(fs.readFileSync(path));
 }
 
-async function main() {
+export default async function () {
   const templateWb = await getWb(paths.template),
     template = templateWb.getWorksheet(1),
     ziping = (await getWb(paths.data)).getWorksheet(1),
@@ -67,9 +67,9 @@ async function main() {
         chuqinlv: zuoye.getRow(p.index + 2).getCell("C").value,
       },
       zuoye: {
-        pingjunfen: zuoye.getRow(p.index + 2).getCell("E").value,
-        pingjunfenpaiming: zuoye.getRow(p.index + 2).getCell("G").value,
-        tijiaolv: zuoye.getRow(p.index + 2).getCell("I").value,
+        pingjunfen: zuoye.getRow(p.index + 2).getCell("G").value,
+        pingjunfenpaiming: zuoye.getRow(p.index + 2).getCell("I").value,
+        tijiaolv: zuoye.getRow(p.index + 2).getCell("E").value,
       },
       jifen: {
         scores: Object.values(jifen.getRow(p.index + 2).values).filter(
@@ -90,7 +90,7 @@ async function main() {
     const titleCell = template.getCell("A2");
     titleCell.value = titleCell.value
       ?.toString()
-      .replace("致  ：", `致：${people.name}`);
+      .replace("致  ：", `致${people.name}：`);
     // 填充数据
     function fillPingjiaData(data: ExcelJS.CellValue[], templateRow: number) {
       data.forEach((item, index) => {
@@ -116,5 +116,3 @@ async function main() {
     );
   }
 }
-
-main();

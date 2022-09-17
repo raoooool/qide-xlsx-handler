@@ -1,6 +1,7 @@
 node_modules
 output
 .DS_Store
+dist
 
 web/.env.local
 web/.umirc.local.ts
@@ -8,4 +9,3 @@ web/config/config.local.ts
 web/src/.umi
 web/src/.umi-production
 web/src/.umi-test
-web/dist
