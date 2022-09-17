@@ -23,10 +23,10 @@ interface People {
 }
 
 const paths = {
-  public: path.join(process.cwd(), "public"),
-  template: path.join(process.cwd(), "public", "template.xlsx"),
-  data: path.join(process.cwd(), "public", "fake_data.xlsx"),
-  output: path.join(process.cwd(), "output"),
+  public: path.join(__dirname, "..", "public"),
+  template: path.join(__dirname, "..", "public", "template.xlsx"),
+  data: path.join(__dirname, "..", "public", "fake_data.xlsx"),
+  output: path.join(__dirname, "..", "output"),
 };
 
 function getWb(path: string) {
@@ -83,23 +83,33 @@ async function main() {
   }
 
   // 每个人生成一个文件
+  fs.ensureDirSync(paths.output);
   for (const people of peoples) {
     const data = getPeopleData(people);
     // 致青春
-    const titleCell = template.getRow(2).getCell("A");
+    const titleCell = template.getCell("A2");
     titleCell.value = titleCell.value
       ?.toString()
       .replace("致  ：", `致：${people.name}`);
     // 填充数据
     function fillPingjiaData(data: ExcelJS.CellValue[], templateRow: number) {
-      const row = template.getRow(templateRow);
       data.forEach((item, index) => {
-        row.getCell(3 + index).value = item;
+        template.getRow(templateRow).getCell(3 + index).value = item;
       });
     }
     fillPingjiaData(data.pingjia.ziping, 11);
     fillPingjiaData(data.pingjia.shangjiping, 12);
     fillPingjiaData(data.pingjia.pingjiping, 13);
+    template.getCell("E39").value = data.zuoye.tijiaolv;
+    template.getCell("E40").value = data.zuoye.pingjunfen;
+    template.getCell("E41").value = data.zuoye.pingjunfenpaiming;
+    function fillJifenData(data: ExcelJS.CellValue[], templateRow: number) {
+      data.forEach((item, index) => {
+        template.getRow(templateRow).getCell(7 + index * 2).value = item;
+      });
+    }
+    fillJifenData(data.jifen.scores, 39);
+    fillJifenData(data.jifen.paiming, 41);
     // 写入文件
     await templateWb.xlsx.writeFile(
       path.join(paths.output, `${people.name}.xlsx`)
