@@ -67,7 +67,7 @@ export default function HomePage() {
 
   return (
     <div className="bg-purple-50 h-screen p-6 font-mono flex flex-col">
-      <div className="text-3xl font-bold text-purple-900">培训表格小能手</div>
+      <div className="text-3xl font-bold text-purple-900">培训报告小能手</div>
       <div className="flex-1 flex mt-6 gap-6">
         {Object.values(configs).map((item) => {
           return (

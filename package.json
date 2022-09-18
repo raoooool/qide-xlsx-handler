@@ -1,6 +1,6 @@
 {
   "name": "qide-xlsx-handler",
-  "productName": "培训表格小能手",
+  "productName": "培训报告小能手",
   "version": "1.0.0",
   "main": "dist/main.js",
   "license": "MIT",
