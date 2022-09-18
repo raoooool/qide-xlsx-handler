@@ -1,3 +1,5 @@
 export default {
-  npmClient: 'yarn'
+  npmClient: "yarn",
+  tailwindcss: {},
+  plugins: ["@umijs/plugins/dist/tailwindcss"],
 };

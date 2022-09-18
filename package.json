@@ -1,12 +1,11 @@
 {
   "name": "qide-xlsx-handler",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "dist/main.js",
   "license": "MIT",
   "scripts": {
     "bootstrap": "yarn && cd web && yarn",
     "preinstall": "export ELECTRON_MIRROR='https://npmmirror.com/mirrors/electron/'",
-    "dev": "ts-node src/index.ts",
     "start": "export ELECTRON_NODE_ENV=dev && electron ."
   },
   "dependencies": {

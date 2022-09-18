@@ -22,20 +22,26 @@ interface People {
   };
 }
 
-const paths = {
-  public: path.join(__dirname, "..", "public"),
-  template: path.join(__dirname, "..", "public", "template.xlsx"),
-  data: path.join(__dirname, "..", "public", "fake_data.xlsx"),
-  output: path.join(__dirname, "..", "output"),
-};
-
-function getWb(path: string) {
-  const wb = new ExcelJS.Workbook();
-  return wb.xlsx.load(fs.readFileSync(path));
-}
-
-export default async function () {
-  const templateWb = await getWb(paths.template),
+export default async function (
+  templatePath = "",
+  dataFilePath = "",
+  outputPath = ""
+) {
+  function getWb(path: string) {
+    const wb = new ExcelJS.Workbook();
+    return wb.xlsx.load(fs.readFileSync(path));
+  }
+  function getPaths() {
+    return {
+      template:
+        templatePath || path.join(__dirname, "..", "public", "template.xlsx"),
+      data:
+        dataFilePath || path.join(__dirname, "..", "public", "fake_data.xlsx"),
+      output: outputPath || path.join(__dirname, "..", "output"),
+    };
+  }
+  const paths = getPaths(),
+    templateWb = await getWb(paths.template),
     template = templateWb.getWorksheet(1),
     ziping = (await getWb(paths.data)).getWorksheet(1),
     shangjiping = (await getWb(paths.data)).getWorksheet(2),
@@ -115,4 +121,5 @@ export default async function () {
       path.join(paths.output, `${people.name}.xlsx`)
     );
   }
+  return { message: "生成文件成功" };
 }
