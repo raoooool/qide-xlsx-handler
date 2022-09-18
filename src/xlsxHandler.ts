@@ -50,18 +50,15 @@ export default async function (
     jifen = (await getWb(paths.data)).getWorksheet(5),
     paiming = (await getWb(paths.data)).getWorksheet(6),
     peoples =
-      ziping
-        .getRows(2, ziping.actualRowCount - 1)
-        ?.map((row, index) => ({
-          name: row.getCell("A").value,
-          index,
-        }))
-        .slice(0, 1) || [];
+      ziping.getRows(2, ziping.actualRowCount - 1)?.map((row, index) => ({
+        name: row.getCell("A").value,
+        index,
+      })) || [];
 
   // 组合每个人的信息
   function getPeopleData(p: typeof peoples[number]): People {
     const getPingjiaData = (ws: Worksheet) =>
-      Object.values(ws.getRow(p.index + 2).values).splice(1);
+      Object.values(ws.getRow(p.index + 2).values).slice(1);
 
     return {
       pingjia: {
@@ -96,16 +93,19 @@ export default async function (
     const titleCell = template.getCell("A2");
     titleCell.value = titleCell.value
       ?.toString()
-      .replace("致  ：", `致${people.name}：`);
+      .replace(/致.*：/, `致${people.name}：`);
     // 填充数据
     function fillPingjiaData(data: ExcelJS.CellValue[], templateRow: number) {
       data.forEach((item, index) => {
-        template.getRow(templateRow).getCell(3 + index).value = item;
+        const cell = template.getRow(templateRow).getCell(3 + index);
+        cell.value = item;
+        cell.style.alignment!.horizontal = "center";
       });
     }
     fillPingjiaData(data.pingjia.ziping, 11);
     fillPingjiaData(data.pingjia.shangjiping, 12);
     fillPingjiaData(data.pingjia.pingjiping, 13);
+    template.getCell("C39").value = data.chuqin.chuqinlv;
     template.getCell("E39").value = data.zuoye.tijiaolv;
     template.getCell("E40").value = data.zuoye.pingjunfen;
     template.getCell("E41").value = data.zuoye.pingjunfenpaiming;
