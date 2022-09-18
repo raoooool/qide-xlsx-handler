@@ -79,18 +79,18 @@ export default function HomePage() {
           );
         })}
       </div>
-      <div className="flex gap-6 text-purple-50">
+      <div className="flex gap-4 text-purple-50">
         <div
           onClick={reset}
-          className="py-1 w-1/4 mt-6 rounded-lg bg-purple-900 text-center  cursor-pointer hover:bg-purple-800"
+          className="py-1 w-1/5 mt-6 rounded-lg bg-purple-900 text-center cursor-pointer hover:bg-purple-800"
         >
           重新选
         </div>
         <div
           onClick={start}
-          className="py-1 w-3/4 mt-6 rounded-lg bg-purple-900 text-center  cursor-pointer hover:bg-purple-800"
+          className="py-1 w-4/5 mt-6 rounded-lg bg-purple-900 text-center  cursor-pointer hover:bg-purple-800"
         >
-          好了
+          我好了
         </div>
       </div>
     </div>
