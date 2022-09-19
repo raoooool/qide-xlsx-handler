@@ -2,6 +2,7 @@ node_modules
 output
 .DS_Store
 dist
+out
 
 web/.env.local
 web/.umirc.local.ts
