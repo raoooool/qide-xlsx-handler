@@ -1,42 +1,28 @@
 {
-  "name": "qide-xlsx-handler",
-  "productName": "培训报告小能手",
-  "version": "1.0.0",
-  "main": "dist/main.js",
-  "license": "MIT",
+  "private": true,
+  "author": "Pan JW <panjunwen@cvte.com>",
   "scripts": {
-    "bootstrap": "yarn && cd web && yarn",
-    "dev": "tsc -w",
-    "start": "export ELECTRON_NODE_ENV=dev && electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "build": "yarn tsc && cd web && yarn build && cd .. && yarn make"
+    "dev": "umi dev",
+    "build": "umi build",
+    "postinstall": "umi setup",
+    "setup": "umi setup",
+    "start": "npm run dev"
   },
   "dependencies": {
+    "ahooks": "^3.7.1",
+    "antd": "^4.23.5",
+    "classnames": "^2.3.2",
     "exceljs": "^4.3.0",
-    "fs-extra": "^10.1.0"
+    "tdesign-react": "^0.42.2",
+    "umi": "^4.0.25"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.66",
-    "@electron-forge/maker-dmg": "^6.0.0-beta.66",
-    "@types/fs-extra": "^9.0.13",
-    "electron": "^20.1.4",
-    "typescript": "^4.8.3"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "public/icon.icns"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {
-            "format": "ULFO",
-            "icon": "public/icon.icns"
-          }
-        }
-      ]
-    }
+    "@types/exceljs": "^1.3.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/wicg-file-system-access": "^2020.9.5",
+    "@umijs/plugins": "^4.0.25",
+    "tailwindcss": "^3",
+    "typescript": "^4.1.2"
   }
 }
