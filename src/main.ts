@@ -3,8 +3,6 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { dialog } from "electron";
 import xlsxHandler from "./xlsxHandler";
 
-const isDev = process.env.ELECTRON_NODE_ENV === "dev";
-
 // 业务逻辑
 function getFileName() {
   const result = dialog.showOpenDialogSync({
@@ -31,11 +29,11 @@ function createWindow() {
     },
   });
 
-  if (isDev) {
+  if (app.isPackaged) {
+    win.loadFile(path.join(__dirname, "..", "web", "dist", "index.html"));
+  } else {
     win.loadURL("http://localhost:8000");
     win.webContents.openDevTools({ mode: "bottom" });
-  } else {
-    win.loadFile(path.join(__dirname, "..", "web", "dist", "index.html"));
   }
 }
 
