@@ -9,7 +9,7 @@ function MenuItem(
   return (
     <div
       className={classNames("text-xl cursor-pointer text-purple-900", {
-        "font-bold": location.href.includes(to),
+        "font-bold": location.pathname === to,
       })}
       {...rest}
     >
