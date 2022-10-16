@@ -1,6 +1,6 @@
 {
   "private": true,
-  "author": "Pan JW <panjunwen@cvte.com>",
+  "author": "Pan JW",
   "scripts": {
     "dev": "umi dev",
     "build": "umi build",
