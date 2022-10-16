@@ -2,6 +2,8 @@ import { Button, Input, InputValue, Space } from "tdesign-react";
 
 export default function (props: {
   onChange?: (v: string[]) => void;
+  onDelete: () => void;
+  onCopy: () => void;
   value?: string[];
 }) {
   const { value = [] } = props;
@@ -27,8 +29,12 @@ export default function (props: {
       <div>➡️</div>
       <Input value={value[1]} onChange={onChange("end")} />
       <Space size="small">
-        <Button size="small">复制</Button>
-        <Button size="small">删掉</Button>
+        <Button size="small" onClick={props.onCopy}>
+          复制
+        </Button>
+        <Button size="small" onClick={props.onDelete}>
+          删掉
+        </Button>
       </Space>
     </Space>
   );

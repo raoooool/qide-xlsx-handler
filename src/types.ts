@@ -2,6 +2,7 @@ export type Rule = {
   id: string;
   name: string;
   sheetIndex: string;
-  rule: string[][];
+  rules: string[][];
   createdTime: string;
+  modifiedTime?: string;
 };
