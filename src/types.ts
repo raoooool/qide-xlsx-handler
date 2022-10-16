@@ -1,8 +1,12 @@
 export type Rule = {
   id: string;
   name: string;
-  sheetIndex: string;
-  rules: string[][];
+  rules: [string, string][];
   createdTime: string;
   modifiedTime?: string;
+};
+
+export type DataRule = {
+  [key: string]: string;
+  startRow: string;
 };

@@ -23,10 +23,9 @@ export default function (props: { onClose: () => void; curRule?: Rule }) {
     const isValidate = await form.validate?.(),
       data = form.getFieldsValue?.(true);
     if (isValidate !== true) return;
-    const { name = "", sheetIndex = "1", ...rules } = data || {};
+    const { name = "", ...rules } = data || {};
     if (isEdit && props.curRule) {
       props.curRule.name = name;
-      props.curRule.sheetIndex = sheetIndex;
       props.curRule.modifiedTime = dayjs().format("YYYY-MM-DD HH:mm");
       props.curRule.rules = Object.values(rules);
       setRules([...preRules]);
@@ -36,7 +35,6 @@ export default function (props: { onClose: () => void; curRule?: Rule }) {
         {
           id: v4(),
           name,
-          sheetIndex,
           createdTime: dayjs().format("YYYY-MM-DD HH:mm"),
           rules: Object.values(rules),
         },
@@ -80,14 +78,6 @@ export default function (props: { onClose: () => void; curRule?: Rule }) {
           rules={[{ required: true }]}
         >
           <Input placeholder="请输入名称" />
-        </Form.FormItem>
-        <Form.FormItem
-          name="sheetIndex"
-          label="表序号"
-          rules={[{ required: true }]}
-          initialData={props.curRule?.sheetIndex || 1}
-        >
-          <Input placeholder="请输入表序号" type="number" />
         </Form.FormItem>
         <Space align="start" className="mt-4 mb-4">
           <div className="text-lg font-semibold relative bottom-0.5">

@@ -1,30 +1,81 @@
+import RuleStore from "@/stores/RuleStore";
 import Excel from "exceljs";
-import { useMemo, useState } from "react";
-import { Button } from "tdesign-react";
+import { Button, message, Space } from "tdesign-react";
+import { BlobWriter, ZipWriter, BlobReader } from "@zip.js/zip.js";
+import { v4 } from "uuid";
+import useDataWb from "@/hooks/useDataWb";
+import useTempWb from "@/hooks/useTempWb";
 
 export default function () {
-  const [templateWs, setTemplateWs] = useState<Excel.Worksheet>();
+  const { onDataFileChoose, dataWb, dataFile, dataRule } = useDataWb();
+  const { onTempFileChoose, tempFile } = useTempWb();
+  const { rules } = RuleStore.useContainer();
 
-  async function onTemplateBtnClick() {
-    const [fileHandle] = await window.showOpenFilePicker();
-    const fileData = await fileHandle.getFile();
-    const wb = new Excel.Workbook();
-    await wb.xlsx.load(await fileData.arrayBuffer());
-    setTemplateWs(wb.worksheets[0]);
+  async function onStart() {
+    if (!tempFile || !dataFile || !dataRule) {
+      message.error("不要调皮");
+      return;
+    }
+    const peopleCount = Math.max(
+      (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule?.startRow) - 1,
+      0
+    );
+
+    const zipFileWriter = new BlobWriter();
+    const zipWriter = new ZipWriter(zipFileWriter);
+
+    // 对人数处理
+    const promises = Array(peopleCount)
+      .fill(null)
+      .map(async (_, index) => {
+        const wb = new Excel.Workbook();
+        await wb.xlsx.load(await tempFile.arrayBuffer());
+        const tempWs = wb.worksheets[0];
+        const rowIndex = index + 1;
+        const { startRow, ...dataRuleMap } = dataRule;
+        // 对每个数据表处理
+        Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
+          const dataWs = dataWb?.getWorksheet(wsName);
+          const ruleMap = new Map<string, string>(
+            rules.find((item) => item.id === ruleKey)?.rules || []
+          );
+          // 对每个映射处理
+          [...ruleMap.entries()].forEach(([col, cell]) => {
+            tempWs.getCell(cell).value = dataWs
+              ?.getRow(rowIndex)
+              .getCell(col).value;
+          });
+        });
+        // 获取人名
+        const name =
+          dataWb?.worksheets[0].getRow(rowIndex).getCell("A").toString() ||
+          v4();
+        const buffer = await wb.xlsx.writeBuffer();
+        zipWriter.add(name + ".xlsx", new BlobReader(new Blob([buffer])));
+      });
+
+    await Promise.all(promises);
+    const blob = await zipWriter.close();
+    const saveHandle = await window.showSaveFilePicker({
+      suggestedName: "data.zip",
+    });
+    const writableStream = await saveHandle.createWritable();
+    await writableStream.write(blob);
+    await writableStream.close();
+    message.success("生成成功");
   }
-
-  // const templateData = useMemo(
-  //   () => templateWs?.getSheetValues() || [],
-  //   [templateWs]
-  // );
 
   return (
     <div>
-      <div></div>
-      <div>
-        <Button>test</Button>
-        {/* <Button onClick={onTemplateBtnClick}>选择模板文件</Button> */}
-      </div>
+      <Space direction="vertical">
+        <Button onClick={onDataFileChoose}>
+          {dataFile ? `已选择 ${dataFile.name}` : "选择数据文件"}
+        </Button>
+        <Button onClick={onTempFileChoose}>
+          {tempFile ? `已选择 ${tempFile.name}` : "选择模板文件"}
+        </Button>
+        <Button onClick={onStart}>开始生成</Button>
+      </Space>
     </div>
   );
 }
