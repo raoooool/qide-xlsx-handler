@@ -3,8 +3,8 @@ import Excel from "exceljs";
 import { Button, message, Space } from "tdesign-react";
 import { BlobWriter, ZipWriter, BlobReader } from "@zip.js/zip.js";
 import { v4 } from "uuid";
-import useDataWb from "@/hooks/useDataWb";
-import useTempWb from "@/hooks/useTempWb";
+import useDataWb from "@/pages/hooks/useDataWb";
+import useTempWb from "@/pages/hooks/useTempWb";
 
 export default function () {
   const { onDataFileChoose, dataWb, dataFile, dataRule } = useDataWb();
@@ -16,8 +16,9 @@ export default function () {
       message.error("不要调皮");
       return;
     }
+    message.loading("生成中", 0);
     const peopleCount = Math.max(
-      (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule?.startRow) - 1,
+      (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule.startRow) + 1,
       0
     );
 
@@ -31,7 +32,7 @@ export default function () {
         const wb = new Excel.Workbook();
         await wb.xlsx.load(await tempFile.arrayBuffer());
         const tempWs = wb.worksheets[0];
-        const rowIndex = index + 1;
+        const rowIndex = Number(dataRule.startRow) + index;
         const { startRow, ...dataRuleMap } = dataRule;
         // 对每个数据表处理
         Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
@@ -62,6 +63,7 @@ export default function () {
     const writableStream = await saveHandle.createWritable();
     await writableStream.write(blob);
     await writableStream.close();
+    message.closeAll();
     message.success("生成成功");
   }
 

@@ -14,11 +14,12 @@ export default function () {
 
   async function onConfirm(wb: Excel.Workbook, file: File) {
     const isValid = await form.validate?.();
-    if (isValid !== true) return;
+    if (isValid !== true) return false;
     const data = form.getFieldsValue?.(true);
     setDataRule({ ...data, startRow: data?.startRow });
     setDataWb(wb);
     setDataFile(file);
+    return true;
   }
 
   function openRuleDialog(wb: Excel.Workbook, file: File) {
@@ -27,12 +28,17 @@ export default function () {
       onClose: () => d.destroy(),
       onCancel: () => d.destroy(),
       onConfirm: async () => {
-        await onConfirm(wb, file);
-        d.destroy();
+        const done = await onConfirm(wb, file);
+        done && d.destroy();
       },
       body: (
         <Form labelWidth={100} form={form}>
-          <Form.FormItem name="startRow" label="数据起始行" initialData={1}>
+          <Form.FormItem
+            rules={[{ required: true }]}
+            name="startRow"
+            label="数据起始行"
+            initialData={2}
+          >
             <Input type="number" />
           </Form.FormItem>
           {wb.worksheets.map((item) => {
@@ -49,7 +55,7 @@ export default function () {
                   </Space>
                 }
               >
-                <Select>
+                <Select empty="暂无规则，请先到规则页新建规则">
                   {rules.map((item) => {
                     return (
                       <Select.Option key={item.id} value={item.id}>
