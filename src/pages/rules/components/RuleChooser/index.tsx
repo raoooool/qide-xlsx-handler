@@ -1,4 +1,4 @@
-import { Button, Input, InputValue, Space } from "tdesign-react";
+import { Button, InputValue, Space, Textarea } from "tdesign-react";
 
 export default function (props: {
   onChange?: (v: string[]) => void;
@@ -25,16 +25,16 @@ export default function (props: {
 
   return (
     <Space align="center">
-      <Input
+      <Textarea
         value={value[0]}
         onChange={onChange("start")}
         placeholder="请输入列号，如 B"
       />
       <div>➡️</div>
-      <Input
+      <Textarea
         value={value[1]}
         onChange={onChange("end")}
-        placeholder="请输入单元格，如 D3"
+        placeholder="请输入单元格，如 D；高级映射使用英文分号隔开"
       />
       <Space size="small">
         <Button size="small" onClick={props.onCopy}>

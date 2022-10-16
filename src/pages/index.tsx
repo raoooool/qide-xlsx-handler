@@ -5,6 +5,7 @@ import { BlobWriter, ZipWriter, BlobReader } from "@zip.js/zip.js";
 import { v4 } from "uuid";
 import useDataWb from "@/pages/hooks/useDataWb";
 import useTempWb from "@/pages/hooks/useTempWb";
+import { template } from "lodash-es";
 
 export default function () {
   const { onDataFileChoose, dataWb, dataFile, dataRule } = useDataWb();
@@ -42,9 +43,14 @@ export default function () {
           );
           // 对每个映射处理
           [...ruleMap.entries()].forEach(([col, cell]) => {
-            tempWs.getCell(cell).value = dataWs
-              ?.getRow(rowIndex)
-              .getCell(col).value;
+            const cellInfo = cell.split(";"),
+              realCell = cellInfo[0],
+              special = cellInfo[1];
+            const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
+            const postCellData = tempWs.getCell(realCell).value;
+            tempWs.getCell(realCell).value = special
+              ? template(special)({ pre: preCellData, post: postCellData })
+              : preCellData;
           });
         });
         // 获取人名

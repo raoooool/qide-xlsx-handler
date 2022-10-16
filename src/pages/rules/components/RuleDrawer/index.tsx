@@ -90,6 +90,7 @@ export default function (props: { onClose: () => void; curRule?: Rule }) {
         {choosers.map((chooser) => {
           return (
             <Form.FormItem
+              className="mb-4"
               key={chooser.key}
               name={chooser.key}
               rules={[
