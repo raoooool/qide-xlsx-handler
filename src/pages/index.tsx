@@ -20,7 +20,7 @@ export default function () {
     try {
       message.loading("生成中", 0);
       const peopleCount = Math.max(
-        dataWb.getWorksheet(1).rowCount - Number(dataRule.startRow) + 1,
+        dataWb.getWorksheet(1).actualRowCount - Number(dataRule.startRow) + 1,
         0
       );
 
@@ -44,12 +44,16 @@ export default function () {
               rules.find((item) => item.id === ruleKey)?.rules || [];
             // 对每个映射处理
             ruleArr.forEach(([col, cell, special]) => {
-              const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
+              const preCellData = dataWs.getRow(rowIndex).getCell(col).value;
               const postCell = tempWs.getCell(cell);
               postCell.value = special
                 ? template(special)({ pre: preCellData, post: postCell.value })
                 : preCellData;
             });
+          });
+          // 处理行高问题
+          tempWs.getRows(1, tempWs.rowCount)?.forEach((row) => {
+            row.height = row.height || tempWs.properties.defaultRowHeight;
           });
           // 获取人名
           const name =
