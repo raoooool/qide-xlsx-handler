@@ -1,6 +1,6 @@
 import RuleStore from "@/stores/RuleStore";
 import Excel from "exceljs";
-import { Button, message, Space } from "tdesign-react";
+import { Button, message } from "tdesign-react";
 import { BlobWriter, ZipWriter, BlobReader } from "@zip.js/zip.js";
 import { v4 } from "uuid";
 import useDataWb from "@/pages/hooks/useDataWb";
@@ -13,14 +13,14 @@ export default function () {
   const { rules } = RuleStore.useContainer();
 
   async function onStart() {
-    if (!tempFile || !dataFile || !dataRule) {
+    if (!tempFile || !dataFile || !dataRule || !dataWb) {
       message.error("请先选择数据和模板文件");
       return;
     }
     try {
       message.loading("生成中", 0);
       const peopleCount = Math.max(
-        (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule.startRow) + 1,
+        dataWb.getWorksheet(1).rowCount - Number(dataRule.startRow) + 1,
         0
       );
 
@@ -33,26 +33,27 @@ export default function () {
         .map(async (_, index) => {
           const wb = new Excel.Workbook();
           await wb.xlsx.load(await tempFile.arrayBuffer());
-          const tempWs = wb.worksheets[0];
+          const tempWs = wb.getWorksheet(1);
           const rowIndex = Number(dataRule.startRow) + index;
           const { startRow, ...dataRuleMap } = dataRule;
           // 对每个数据表处理
           Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
-            const dataWs = dataWb?.getWorksheet(wsName);
+            const dataWs = dataWb.getWorksheet(wsName);
+            if (!dataWs) throw new Error("Invalid Data Worksheet.");
             const ruleArr =
               rules.find((item) => item.id === ruleKey)?.rules || [];
             // 对每个映射处理
             ruleArr.forEach(([col, cell, special]) => {
               const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
-              const postCellData = tempWs.getCell(cell).value;
-              tempWs.getCell(cell).value = special
-                ? template(special)({ pre: preCellData, post: postCellData })
+              const postCell = tempWs.getCell(cell);
+              postCell.value = special
+                ? template(special)({ pre: preCellData, post: postCell.value })
                 : preCellData;
             });
           });
           // 获取人名
           const name =
-            dataWb?.worksheets[0].getRow(rowIndex).getCell("A").toString() ||
+            dataWb.getWorksheet(1).getRow(rowIndex).getCell("A").toString() ||
             v4();
           const buffer = await wb.xlsx.writeBuffer();
           zipWriter.add(name + ".xlsx", new BlobReader(new Blob([buffer])));
