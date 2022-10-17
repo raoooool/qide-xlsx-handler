@@ -2,7 +2,7 @@ import { defineConfig } from "umi";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const baseName = isDev ? "/" : '"/" : "/qide-xlsx-handler/';
+const baseName = isDev ? "/" : "/qide-xlsx-handler/";
 
 export default defineConfig({
   npmClient: "yarn",
