@@ -1,5 +1,6 @@
 import { useUpdate } from "ahooks";
 import classNames from "classnames";
+import { Space, Tag } from "tdesign-react";
 import { Link, Outlet } from "umi";
 
 function MenuItem(
@@ -9,7 +10,7 @@ function MenuItem(
   return (
     <div
       className={classNames("text-xl cursor-pointer text-purple-900", {
-        "font-bold": new RegExp(`.*${to}$`).test(location.pathname),
+        "font-bold": new RegExp(`.*${to}$`).test(location.hash),
       })}
       {...rest}
     >
@@ -24,7 +25,19 @@ export default function Layout() {
   return (
     <div className="p-6 bg-purple-50 h-screen">
       <header className="flex justify-between align-middle mb-6">
-        <div className="text-3xl font-bold text-purple-900">表格映射小助手</div>
+        <Space size="small">
+          <div className="text-3xl font-bold text-purple-900">
+            表格映射小助手
+          </div>
+          <Tag
+            size="small"
+            theme="primary"
+            className="bg-purple-100"
+            shape="round"
+          >
+            Only for Chrome
+          </Tag>
+        </Space>
         <div className="flex gap-4" onClick={update}>
           <MenuItem to="/">首页</MenuItem>
           <MenuItem to="/rules">规则</MenuItem>
