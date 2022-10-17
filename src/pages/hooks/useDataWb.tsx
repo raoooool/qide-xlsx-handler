@@ -32,7 +32,7 @@ export default function () {
         done && d.destroy();
       },
       body: (
-        <Form labelWidth={100} form={form}>
+        <Form labelWidth={100} form={form} className="mb-6">
           <Form.FormItem
             rules={[{ required: true }]}
             name="startRow"
@@ -44,7 +44,6 @@ export default function () {
           {wb.worksheets.map((item) => {
             return (
               <Form.FormItem
-                className="mb-6"
                 name={item.name}
                 key={item.name}
                 rules={[{ required: true, message: "请选择规则" }]}
