@@ -29,12 +29,7 @@ export default function Layout() {
           <div className="text-3xl font-bold text-purple-900">
             表格映射小助手
           </div>
-          <Tag
-            size="small"
-            theme="primary"
-            className="bg-purple-100"
-            shape="round"
-          >
+          <Tag size="small" theme="primary" shape="round" variant="light">
             Only for Chrome
           </Tag>
         </Space>
