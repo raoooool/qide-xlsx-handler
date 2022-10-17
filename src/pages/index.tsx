@@ -17,56 +17,61 @@ export default function () {
       message.error("请先选择数据和模板文件");
       return;
     }
-    message.loading("生成中", 0);
-    const peopleCount = Math.max(
-      (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule.startRow) + 1,
-      0
-    );
+    try {
+      message.loading("生成中", 0);
+      const peopleCount = Math.max(
+        (dataWb?.worksheets[0].rowCount || 0) - Number(dataRule.startRow) + 1,
+        0
+      );
 
-    const zipFileWriter = new BlobWriter();
-    const zipWriter = new ZipWriter(zipFileWriter);
+      const zipFileWriter = new BlobWriter();
+      const zipWriter = new ZipWriter(zipFileWriter);
 
-    // 对人数处理
-    const promises = Array(peopleCount)
-      .fill(null)
-      .map(async (_, index) => {
-        const wb = new Excel.Workbook();
-        await wb.xlsx.load(await tempFile.arrayBuffer());
-        const tempWs = wb.worksheets[0];
-        const rowIndex = Number(dataRule.startRow) + index;
-        const { startRow, ...dataRuleMap } = dataRule;
-        // 对每个数据表处理
-        Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
-          const dataWs = dataWb?.getWorksheet(wsName);
-          const ruleArr =
-            rules.find((item) => item.id === ruleKey)?.rules || [];
-          // 对每个映射处理
-          ruleArr.forEach(([col, cell, special]) => {
-            const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
-            const postCellData = tempWs.getCell(cell).value;
-            tempWs.getCell(cell).value = special
-              ? template(special)({ pre: preCellData, post: postCellData })
-              : preCellData;
+      // 对人数处理
+      const promises = Array(peopleCount)
+        .fill(null)
+        .map(async (_, index) => {
+          const wb = new Excel.Workbook();
+          await wb.xlsx.load(await tempFile.arrayBuffer());
+          const tempWs = wb.worksheets[0];
+          const rowIndex = Number(dataRule.startRow) + index;
+          const { startRow, ...dataRuleMap } = dataRule;
+          // 对每个数据表处理
+          Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
+            const dataWs = dataWb?.getWorksheet(wsName);
+            const ruleArr =
+              rules.find((item) => item.id === ruleKey)?.rules || [];
+            // 对每个映射处理
+            ruleArr.forEach(([col, cell, special]) => {
+              const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
+              const postCellData = tempWs.getCell(cell).value;
+              tempWs.getCell(cell).value = special
+                ? template(special)({ pre: preCellData, post: postCellData })
+                : preCellData;
+            });
           });
+          // 获取人名
+          const name =
+            dataWb?.worksheets[0].getRow(rowIndex).getCell("A").toString() ||
+            v4();
+          const buffer = await wb.xlsx.writeBuffer();
+          zipWriter.add(name + ".xlsx", new BlobReader(new Blob([buffer])));
         });
-        // 获取人名
-        const name =
-          dataWb?.worksheets[0].getRow(rowIndex).getCell("A").toString() ||
-          v4();
-        const buffer = await wb.xlsx.writeBuffer();
-        zipWriter.add(name + ".xlsx", new BlobReader(new Blob([buffer])));
-      });
 
-    await Promise.all(promises);
-    const blob = await zipWriter.close();
-    const saveHandle = await window.showSaveFilePicker({
-      suggestedName: "data.zip",
-    });
-    const writableStream = await saveHandle.createWritable();
-    await writableStream.write(blob);
-    await writableStream.close();
-    message.closeAll();
-    message.success("生成成功");
+      await Promise.all(promises);
+      const blob = await zipWriter.close();
+      const saveHandle = await window.showSaveFilePicker({
+        suggestedName: "data.zip",
+      });
+      const writableStream = await saveHandle.createWritable();
+      await writableStream.write(blob);
+      await writableStream.close();
+      message.closeAll();
+      message.success("生成成功");
+    } catch (error) {
+      console.error(error);
+      message.closeAll();
+    }
   }
 
   return (

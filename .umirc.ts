@@ -13,4 +13,5 @@ export default defineConfig({
   favicons: [baseName + "icon.svg"],
   base: baseName,
   publicPath: baseName,
+  hash: true,
 });
