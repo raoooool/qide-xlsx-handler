@@ -1,7 +1,7 @@
 export type Rule = {
   id: string;
   name: string;
-  rules: [string, string][];
+  rules: [string, string, string][];
   createdTime: string;
   modifiedTime?: string;
 };

@@ -38,17 +38,13 @@ export default function () {
         // 对每个数据表处理
         Object.entries(dataRuleMap).forEach(([wsName, ruleKey]) => {
           const dataWs = dataWb?.getWorksheet(wsName);
-          const ruleMap = new Map<string, string>(
-            rules.find((item) => item.id === ruleKey)?.rules || []
-          );
+          const ruleArr =
+            rules.find((item) => item.id === ruleKey)?.rules || [];
           // 对每个映射处理
-          [...ruleMap.entries()].forEach(([col, cell]) => {
-            const cellInfo = cell.split(";"),
-              realCell = cellInfo[0],
-              special = cellInfo[1];
+          ruleArr.forEach(([col, cell, special]) => {
             const preCellData = dataWs?.getRow(rowIndex).getCell(col).value;
-            const postCellData = tempWs.getCell(realCell).value;
-            tempWs.getCell(realCell).value = special
+            const postCellData = tempWs.getCell(cell).value;
+            tempWs.getCell(cell).value = special
               ? template(special)({ pre: preCellData, post: postCellData })
               : preCellData;
           });

@@ -13,7 +13,9 @@ type Chooser = {
 
 export default function (props: { onClose: () => void; curRule?: Rule }) {
   const [choosers, setChoosers] = useState<Chooser[]>(
-    props.curRule?.rules?.map((item) => ({ initValue: item, key: v4() })) || []
+    props.curRule?.rules?.map((item) => ({ initValue: item, key: v4() })) || [
+      { initValue: [], key: v4() },
+    ]
   );
   const [form] = Form.useForm();
   const { setRules, rules: preRules } = RuleStore.useContainer();
@@ -97,7 +99,7 @@ export default function (props: { onClose: () => void; curRule?: Rule }) {
                 { required: true, message: "请输入映射关系" },
                 {
                   validator: (v = []) => {
-                    return v.every(Boolean);
+                    return v.slice(0, 2).every(Boolean);
                   },
                   message: "请输入合法的映射",
                 },
