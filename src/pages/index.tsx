@@ -14,7 +14,7 @@ export default function () {
 
   async function onStart() {
     if (!tempFile || !dataFile || !dataRule) {
-      message.error("不要调皮");
+      message.error("请先选择数据和模板文件");
       return;
     }
     message.loading("生成中", 0);
@@ -70,16 +70,16 @@ export default function () {
   }
 
   return (
-    <div>
-      <Space direction="vertical">
-        <Button onClick={onDataFileChoose}>
-          {dataFile ? `已选择 ${dataFile.name}` : "选择数据文件"}
-        </Button>
-        <Button onClick={onTempFileChoose}>
-          {tempFile ? `已选择 ${tempFile.name}` : "选择模板文件"}
-        </Button>
-        <Button onClick={onStart}>开始生成</Button>
-      </Space>
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 w-80">
+      <Button ghost block shape="round" size="large" onClick={onDataFileChoose}>
+        {dataFile ? `已选择 ${dataFile.name}` : "选择数据文件"}
+      </Button>
+      <Button ghost block shape="round" size="large" onClick={onTempFileChoose}>
+        {tempFile ? `已选择 ${tempFile.name}` : "选择模板文件"}
+      </Button>
+      <Button block shape="round" size="large" onClick={onStart}>
+        生成映射表格
+      </Button>
     </div>
   );
 }

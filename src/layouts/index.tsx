@@ -9,7 +9,7 @@ function MenuItem(
   return (
     <div
       className={classNames("text-xl cursor-pointer text-purple-900", {
-        "font-bold": location.pathname === to,
+        "font-bold": new RegExp(`.*${to}$`).test(location.pathname),
       })}
       {...rest}
     >
@@ -28,7 +28,7 @@ export default function Layout() {
         <div className="flex gap-4" onClick={update}>
           <MenuItem to="/">首页</MenuItem>
           <MenuItem to="/rules">规则</MenuItem>
-          <MenuItem to="/about">关于</MenuItem>
+          <MenuItem to="/guide">教程</MenuItem>
         </div>
       </header>
       <Outlet />
