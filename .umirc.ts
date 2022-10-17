@@ -14,5 +14,4 @@ export default defineConfig({
   base: baseName,
   publicPath: baseName,
   hash: true,
-  history: { type: "hash" },
 });

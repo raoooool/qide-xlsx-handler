@@ -10,7 +10,7 @@ function MenuItem(
   return (
     <div
       className={classNames("text-xl cursor-pointer text-purple-900", {
-        "font-bold": new RegExp(`.*${to}$`).test(location.hash),
+        "font-bold": new RegExp(`.*${to}$`).test(location.pathname),
       })}
       {...rest}
     >
