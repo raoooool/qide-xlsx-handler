@@ -62,7 +62,7 @@ export default function () {
               } catch (error) {
                 console.error(error);
                 message.closeAll();
-                message.success("导入失败");
+                message.error("导入失败");
               }
             }}
           >
