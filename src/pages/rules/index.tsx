@@ -13,7 +13,7 @@ import RuleDrawer from "./components/RuleDrawer";
 
 export default function () {
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const { rules, setRules } = RuleStore.useContainer();
+  const { rules, setRules, exportRules, loadRules } = RuleStore.useContainer();
   const [curRule, setCurRule] = useState<Rule>();
 
   const onDelete = (id: string) => () => {
@@ -55,8 +55,29 @@ export default function () {
         <div />
         <Space>
           <Button onClick={() => setDrawerVisible(true)}>🚀 新增规则</Button>
-          <Button onClick={() => message.info("Doing...")}>📲 导入规则</Button>
-          <Button onClick={() => message.info("Doing...")}>📦 导出规则</Button>
+          <Button
+            onClick={async () => {
+              try {
+                await loadRules();
+              } catch (error) {
+                console.error(error);
+                message.closeAll();
+                message.success("导入失败");
+              }
+            }}
+          >
+            📲 导入规则
+          </Button>
+          <Button
+            onClick={() => {
+              message.loading("正在导出");
+              exportRules();
+              message.closeAll();
+              message.success("导出成功");
+            }}
+          >
+            📦 导出规则
+          </Button>
         </Space>
       </div>
       <div>
