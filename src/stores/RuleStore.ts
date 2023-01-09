@@ -21,7 +21,7 @@ export default createContainer(function () {
     a.href = window.URL.createObjectURL(blob);
     a.dataset.downloadurl = ["text/json", a.download, a.href].join(":");
     a.click();
-  }, []);
+  }, [rules]);
 
   const loadRules = useCallback(async () => {
     const file = await getFile();
@@ -30,7 +30,7 @@ export default createContainer(function () {
       return Promise.reject(new Error("json 读取错误"));
     }
     setRules([...rules, ...data.rules]);
-  }, []);
+  }, [rules]);
 
   return {
     rules,
