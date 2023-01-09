@@ -33,7 +33,7 @@ export default function () {
       },
       body: (
         <div className="mb-6">
-          <Form labelWidth={100} form={form}>
+          <Form form={form} labelAlign="left">
             <Form.FormItem
               rules={[{ required: true }]}
               name="startRow"
@@ -49,10 +49,12 @@ export default function () {
                   key={item.name}
                   rules={[{ required: true, message: "请选择规则" }]}
                   label={
-                    <Space align="center">
-                      <div>{item.name}</div>
-                      <div>➡️</div>
-                    </Space>
+                    <span
+                      className="w-24 inline-block truncate leading-none"
+                      title={item.name}
+                    >
+                      {item.name}
+                    </span>
                   }
                 >
                   <Select empty="暂无规则，请先到规则页新建规则">

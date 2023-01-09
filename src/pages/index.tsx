@@ -81,10 +81,26 @@ export default function () {
 
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 w-80">
-      <Button ghost block shape="round" size="large" onClick={onDataFileChoose}>
+      <Button
+        ghost
+        block
+        shape="round"
+        size="large"
+        onClick={onDataFileChoose}
+        className="truncate"
+        title={dataFile ? dataFile.name : undefined}
+      >
         {dataFile ? `已选择 ${dataFile.name}` : "选择数据文件"}
       </Button>
-      <Button ghost block shape="round" size="large" onClick={onTempFileChoose}>
+      <Button
+        ghost
+        block
+        shape="round"
+        size="large"
+        onClick={onTempFileChoose}
+        className="truncate"
+        title={tempFile ? tempFile.name : undefined}
+      >
         {tempFile ? `已选择 ${tempFile.name}` : "选择模板文件"}
       </Button>
       <Button block shape="round" size="large" onClick={onStart}>
