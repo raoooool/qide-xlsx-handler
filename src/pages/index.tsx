@@ -44,10 +44,19 @@ export default function () {
               rules.find((item) => item.id === ruleKey)?.rules || [];
             // 对每个映射处理
             ruleArr.forEach(([col, cell, special]) => {
-              const preCellData = dataWs.getRow(rowIndex).getCell(col).value;
-              const postCell = tempWs.getCell(cell);
+              let preCellData = dataWs.getRow(rowIndex).getCell(col)
+                  .value as any,
+                postCell = tempWs.getCell(cell);
+              // 当数据单元格的值为公式生成或拖动批量生成时，特殊处理
+              preCellData = preCellData?.sharedFormula
+                ? preCellData.result || ""
+                : preCellData;
+              // 映射数据到模板文件
               postCell.value = special
-                ? template(special)({ pre: preCellData, post: postCell.value })
+                ? template(special)({
+                    pre: preCellData,
+                    post: postCell.value,
+                  })
                 : preCellData;
             });
           });
@@ -76,6 +85,7 @@ export default function () {
     } catch (error) {
       console.error(error);
       message.closeAll();
+      message.error("生成失败，如果是意料之外的，请联系管理员");
     }
   }
 
