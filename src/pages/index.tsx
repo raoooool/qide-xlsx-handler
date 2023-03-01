@@ -69,7 +69,10 @@ export default function () {
             dataWb.getWorksheet(1).getRow(rowIndex).getCell("A").toString() ||
             v4();
           const buffer = await wb.xlsx.writeBuffer();
-          zipWriter.add(name + ".xlsx", new BlobReader(new Blob([buffer])));
+          await zipWriter.add(
+            name + ".xlsx",
+            new BlobReader(new Blob([buffer]))
+          );
         });
 
       await Promise.all(promises);
