@@ -75,14 +75,15 @@ export default function () {
           );
         });
 
-      await Promise.all(promises);
+      for (let i = 0; i < promises.length; i++) {
+        await promises[i];
+      }
       const blob = await zipWriter.close();
-      const saveHandle = await window.showSaveFilePicker({
-        suggestedName: "data.zip",
-      });
-      const writableStream = await saveHandle.createWritable();
-      await writableStream.write(blob);
-      await writableStream.close();
+      // download blob
+      const a = document.createElement("a");
+      a.href = window.URL.createObjectURL(blob);
+      a.download = "data.zip";
+      a.click();
       message.closeAll();
       message.success("生成成功");
     } catch (error) {
