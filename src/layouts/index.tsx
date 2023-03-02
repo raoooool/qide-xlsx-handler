@@ -2,6 +2,7 @@ import { useUpdate } from "ahooks";
 import classNames from "classnames";
 import { Space, Tag } from "tdesign-react";
 import { Link, Outlet } from "umi";
+import packagejson from "@/../package.json";
 
 function MenuItem(
   props: React.HTMLAttributes<HTMLDivElement> & { to: string }
@@ -29,6 +30,9 @@ export default function Layout() {
           <div className="text-3xl font-bold text-purple-900">
             表格映射小助手
           </div>
+          <Tag size="small" theme="primary" shape="round" variant="light">
+            v{packagejson.version}
+          </Tag>
           <Tag size="small" theme="primary" shape="round" variant="light">
             Only for Chrome
           </Tag>
