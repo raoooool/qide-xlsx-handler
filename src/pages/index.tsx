@@ -3,15 +3,19 @@ import Excel from "exceljs";
 import { Button, message } from "tdesign-react";
 import { BlobWriter, ZipWriter, BlobReader } from "@zip.js/zip.js";
 import { v4 } from "uuid";
-import useDataWb from "@/pages/hooks/useDataWb";
-import useTempWb from "@/pages/hooks/useTempWb";
+import useDataWb from "@/hooks/useDataWb";
+import useTempWb from "@/hooks/useTempWb";
 import { template } from "lodash-es";
 
 export default function () {
   const { onDataFileChoose, dataWb, dataFile, dataRule } = useDataWb();
   const { onTempFileChoose, tempFile } = useTempWb();
+
   const { rules } = RuleStore.useContainer();
 
+  /**
+   * 生成一个包含多个映射结果文件的 zip
+   */
   async function onStart() {
     if (!tempFile || !dataFile || !dataRule || !dataWb) {
       message.error("请先选择数据和模板文件");
@@ -19,6 +23,8 @@ export default function () {
     }
     try {
       message.loading("生成中", 0);
+
+      // 从数据文件中获取要生成的文件份数
       const peopleCount = Math.max(
         dataWb.getWorksheet(1).actualRowCount - Number(dataRule.startRow) + 1,
         0
@@ -27,7 +33,7 @@ export default function () {
       const zipFileWriter = new BlobWriter();
       const zipWriter = new ZipWriter(zipFileWriter);
 
-      // 对人数处理
+      // 对每份文件处理
       const promises = Array(peopleCount)
         .fill(null)
         .map(async (_, index) => {
@@ -68,6 +74,9 @@ export default function () {
           const name =
             dataWb.getWorksheet(1).getRow(rowIndex).getCell("A").toString() ||
             v4();
+          // 打开文件的时候计算所有公式格子
+          wb.calcProperties.fullCalcOnLoad = true;
+          // zip 包处理
           const buffer = await wb.xlsx.writeBuffer();
           await zipWriter.add(
             name + ".xlsx",
